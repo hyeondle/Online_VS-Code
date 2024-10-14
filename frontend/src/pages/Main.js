@@ -31,7 +31,7 @@ export default class Main extends Component {
 
         const infoButton = this.$parent.querySelector(".info-btn");
         if (infoButton) {
-            infoButton.onclick = () => alert("Info clicked. Implement info page navigation!");
+            infoButton.onclick = () => this.createWorkspace();
         }
 
         const logoutButton = this.$parent.querySelector(".logout-btn");
@@ -61,4 +61,35 @@ export default class Main extends Component {
         window.open(url, '_blank');  // 새 창 열기
     }
     
+
+    createWorkspace() {
+        const token = localStorage.getItem("token");  // 로그인 후 저장된 토큰 사용
+        if (!token) {
+            alert("로그인이 필요합니다.");
+            return;
+        }
+    
+        fetch('http://localhost/flask-api/create-workspace', {  // Nginx에서 프록시된 경로로 요청
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                user_id: 2  // 실제로는 로그인된 사용자 ID를 전달
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === 'Workspace created successfully') {
+                alert("작업 디렉토리가 생성되었습니다.");
+            } else {
+                throw new Error(data.error);
+            }
+        })
+        .catch(error => {
+            alert("작업 디렉토리 생성 실패!");
+            console.error(error);
+        });        
+    }
 }

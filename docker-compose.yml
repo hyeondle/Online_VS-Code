@@ -60,17 +60,18 @@ services:
 
   code-server:
     container_name: code-server
-    image: codercom/code-server:latest
+    build: ./code_server  # code-server 디렉토리에서 빌드
     restart: always
     ports:
-      - "8080:8080"
+      - "8081:8081"  # 8081 포트를 사용하도록 변경
+      - "5000:5000"  # Flask API 포트
     volumes:
-      - ./workspaces:/home/coder/project  # 사용자 디렉토리를 마운트
+      - ./workspaces:/home/coder/project
     environment:
       PASSWORD: "password"  # code-server 접속 비밀번호
     networks:
       - app-network
-    command: --bind-addr 0.0.0.0:8080 --auth none
 
 networks:
   app-network:
+    driver: bridge

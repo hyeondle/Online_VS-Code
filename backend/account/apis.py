@@ -93,15 +93,12 @@ def register(request, payload: MakeTestUserRequest):
         user.full_clean()
         user.save()
 
-        # 사용자 작업 디렉토리 생성
-        user_workspace = Path(f"{WORKSPACE_BASE_DIR}/user_{user.id}")
-        user_workspace.mkdir(parents=True, exist_ok=True)
-
         return 201, {"user": UserSchema.from_orm(user)}
     except ValidationError as e:
         return 400, f"Validation Error: {e.messages}"
     except IntegrityError:
         return 400, "User registration failed due to a database error."
+
 
 # 로그인 API
 @account_api.post("/login", response={200: LoginResponse, 401: str})
