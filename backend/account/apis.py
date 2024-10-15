@@ -54,6 +54,7 @@
 
 import os
 import logging
+import requests
 from pathlib import Path
 from ninja import Router
 from django.contrib.auth import authenticate
@@ -117,16 +118,36 @@ def login(request, payload: LoginRequest):
     return 401, "Invalid credentials"
 
 
-# 워큿스페이스 URL 조회 API
+# 워크스페이스 URL 조회 API
 @account_api.get("/workspace-url", auth=AuthBearer())
 def get_workspace_url(request):
     user = request.auth
     if not user:
         return HttpResponse("Unauthorized", status=401)
 
-    workspace_url = f"/workspace/{user.id}/"
-    return HttpResponse(workspace_url, content_type="text/plain")  # JSON 직렬화 없이 원시 문자열 반환
+    # Flask 서버로 유저 ID를 전달하여 워크스페이스 확인
+    flask_api_url = f"http://code-server:5000/return-workspace?user_id={user.id}"
+    try:
+        response = requests.get(flask_api_url)
+        response_data = response.json()
 
+        if response.status_code == 200:
+            workspace_url = response_data.get('workspace')
+            return HttpResponse(workspace_url, content_type="text/plain")
+        else:
+            return HttpResponse(f"Error: {response_data.get('error')}", status=response.status_code)
+
+    except requests.RequestException as e:
+        return HttpResponse(f"Flask API request failed: {str(e)}", status=500)
+
+# user_id 반환 API
+@account_api.get("/user-id", auth=AuthBearer())
+def get_user_id(request):
+    user = request.auth
+    if not user:
+        return HttpResponse("Unauthorized", status=401)
+
+    return HttpResponse(f"{user.id}", content_type="text/plain")
 
 # 유저 정보 조회 API
 @account_api.get("/me", auth=AuthBearer(), response=UsersResponse)
