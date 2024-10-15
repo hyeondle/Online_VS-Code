@@ -51,7 +51,7 @@ export default class Login extends Component {
 
         if (username && password) {
             // 회원가입 요청을 백엔드에 보냄
-            fetch('http://localhost:8000/api/account/register', {
+            fetch('/api/account/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ export default class Login extends Component {
 		const password = this.$parent.querySelector("#password").value;
 
 		if (username && password) {
-			fetch('http://localhost:8000/api/account/login', {
+			fetch('/api/account/login', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
