@@ -49,12 +49,12 @@ export default class Main extends Component {
 
     getWorkspaceUrlAndNavigate() {
         const token = localStorage.getItem('token');
-    
+
         if (!token) {
             alert('로그인이 필요합니다.');
             return;
         }
-    
+
         fetch('http://localhost:8000/api/account/user-id', {
             method: 'GET',
             headers: {
@@ -88,7 +88,6 @@ export default class Main extends Component {
             console.error("Failed to fetch user ID:", error);
         });
     }
-    
 
     createWorkspace() {
         const token = localStorage.getItem("token");  // 로그인 후 저장된 토큰 사용
@@ -96,7 +95,7 @@ export default class Main extends Component {
             alert("로그인이 필요합니다.");
             return;
         }
-    
+
         // `user_id`를 백엔드에서 가져옴
         fetch('http://localhost:8000/api/account/user-id', {
             method: 'GET',
@@ -133,5 +132,5 @@ export default class Main extends Component {
             console.error("Failed to fetch user ID:", error);
         });
     }
-    
+
 }

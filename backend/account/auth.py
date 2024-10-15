@@ -6,6 +6,7 @@ from ninja.security import HttpBearer
 from .models import User
 from main.jwt import get_decoded_token
 
+
 class CustomBackend(ModelBackend):
     def authenticate(self, request, login=None, password=None, **kwargs):
         try:
@@ -22,6 +23,7 @@ class CustomBackend(ModelBackend):
             return User.objects.get(login=login)
         except User.DoesNotExist:
             return None
+
 
 class AuthBearer(HttpBearer):
     def authenticate(self, request, token):

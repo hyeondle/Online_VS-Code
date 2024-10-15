@@ -1,4 +1,5 @@
 // ./src/pages/Entry.js
+// unused page
 
 import Component from "../core/Component.js";
 
@@ -26,7 +27,7 @@ export default class Entry extends Component {
 
     checkEntryKey() {
         const inputKey = this.$parent.querySelector(".entry-key-input").value;
-        const entryKey = "test"; // Use hardcoded value or environment variable injected at build time
+        const entryKey = "test";
 
         if (inputKey === entryKey) {
             document.cookie = "entry=1; path=/"; // Set entry cookie
