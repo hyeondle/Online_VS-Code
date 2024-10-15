@@ -14,7 +14,7 @@ export default class Main extends Component {
                 <div class="card" style="width: 18rem; margin: 0 auto; margin-top: 100px; padding: 20px;">
                     <h1 class="text-center">Main Page</h1>
                     <button class="btn btn-primary btn-block code-editor-btn">Code Editor</button>
-                    <button class="btn btn-secondary btn-block info-btn">Info</button>
+                    <button class="btn btn-secondary btn-block create-btn">Create</button>
                     <button class="btn btn-danger btn-block logout-btn">Logout</button>
                 </div>
             </div>
@@ -29,9 +29,9 @@ export default class Main extends Component {
             };
         }
 
-        const infoButton = this.$parent.querySelector(".info-btn");
-        if (infoButton) {
-            infoButton.onclick = () => this.createWorkspace();
+        const createButton = this.$parent.querySelector(".create-btn");
+        if (createButton) {
+            createButton.onclick = () => this.createWorkspace();
         }
 
         const logoutButton = this.$parent.querySelector(".logout-btn");
