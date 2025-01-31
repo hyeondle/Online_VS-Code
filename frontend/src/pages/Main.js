@@ -55,7 +55,7 @@ export default class Main extends Component {
             return;
         }
 
-        fetch('http://localhost:8000/api/account/user-id', {
+        fetch('/api/account/user-id', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -63,7 +63,7 @@ export default class Main extends Component {
         })
         .then(response => response.text())
         .then(userId => {
-            fetch(`http://localhost/flask-api/return-workspace?user_id=${userId}`, {
+            fetch(`/flask-api/return-workspace?user_id=${userId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -97,7 +97,7 @@ export default class Main extends Component {
         }
 
         // `user_id`를 백엔드에서 가져옴
-        fetch('http://localhost:8000/api/account/user-id', {
+        fetch('/api/account/user-id', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
