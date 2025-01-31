@@ -3,7 +3,7 @@ import os
 
 app = Flask(__name__)
 
-# POST 요청 처리
+# POST 요청: 워크스페이스 생성
 @app.route("/create-workspace", methods=["POST"])
 def create_workspace():
     user_id = request.json.get("user_id")
@@ -13,11 +13,21 @@ def create_workspace():
     workspace_dir = f"/home/coder/project/user_{user_id}"
     try:
         os.makedirs(workspace_dir, exist_ok=True)
-        return jsonify({"message": "Workspace created successfully", "path": workspace_dir})
+        return jsonify({"message": "Workspace created successfully", "user_id": user_id})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# GET 요청 처리
+# GET 요청: 워크스페이스 확인 및 반환
+@app.route("/return-workspace", methods=["GET"])
+def return_workspace():
+    user_id = request.args.get("user_id")
+    workspace_dir = f"/home/coder/project/user_{user_id}"
+    if os.path.exists(workspace_dir):
+        return jsonify({"workspace": workspace_dir})
+    else:
+        return jsonify({"error": "Workspace not found"}), 404
+
+# GET 요청 : 테스트
 @app.route("/", methods=["GET"])
 def health_check():
     return jsonify({"message": "OK"}), 200

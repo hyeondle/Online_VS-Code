@@ -47,7 +47,6 @@ export default class Main extends Component {
         this.setState({ login: 0, visitor: 1, locate: "/src/pages/Login" });
     }
 
-    
     getWorkspaceUrlAndNavigate() {
         const token = localStorage.getItem('token');
     
@@ -56,9 +55,38 @@ export default class Main extends Component {
             return;
         }
     
-        // JWT 토큰을 URL 파라미터로 전달
-        const url = `/code-viewer.html?token=${encodeURIComponent(token)}`;
-        window.open(url, '_blank');  // 새 창 열기
+        fetch('http://localhost:8000/api/account/user-id', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        })
+        .then(response => response.text())
+        .then(userId => {
+            fetch(`http://localhost/flask-api/return-workspace?user_id=${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.workspace) {
+                    const workspaceUrl = decodeURIComponent(data.workspace);
+                    console.log("Workspace URL:", workspaceUrl);
+                    const url = `/workspace/?folder=${workspaceUrl}&token=${encodeURIComponent(token)}`;
+                    window.open(url, '_blank');  // 새 창으로 워크스페이스 열기
+                } else {
+                    alert("워크스페이스를 찾을 수 없습니다.");
+                }
+            })
+            .catch(error => {
+                console.error("Failed to fetch workspace URL:", error);
+            });
+        })
+        .catch(error => {
+            console.error("Failed to fetch user ID:", error);
+        });
     }
     
 
@@ -69,27 +97,41 @@ export default class Main extends Component {
             return;
         }
     
-        fetch('http://localhost/flask-api/create-workspace', {  // Nginx에서 프록시된 경로로 요청
-            method: 'POST',
+        // `user_id`를 백엔드에서 가져옴
+        fetch('http://localhost:8000/api/account/user-id', {
+            method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-                user_id: 2  // 실제로는 로그인된 사용자 ID를 전달
-            }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message === 'Workspace created successfully') {
-                alert("작업 디렉토리가 생성되었습니다.");
-            } else {
-                throw new Error(data.error);
             }
         })
+        .then(response => response.text())
+        .then(userId => {
+            fetch('http://localhost/flask-api/create-workspace', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    user_id: userId
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'Workspace created successfully') {
+                    alert("작업 디렉토리가 생성되었습니다.");
+                } else {
+                    throw new Error(data.error);
+                }
+            })
+            .catch(error => {
+                alert("작업 디렉토리 생성 실패!");
+                console.error(error);
+            });
+        })
         .catch(error => {
-            alert("작업 디렉토리 생성 실패!");
-            console.error(error);
-        });        
+            console.error("Failed to fetch user ID:", error);
+        });
     }
+    
 }
