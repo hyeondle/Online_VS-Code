@@ -42,13 +42,20 @@
 
                 window.checkEntryKey = function() {
                     const inputKey = document.querySelector('.entry-key-input').value;
-                    const entryKey = "test";
-                    if (inputKey === entryKey) {
-                        document.cookie = "entry=1; path=/";
-                        location.reload();
-                    } else {
-                        alert("Invalid Entry Key!");
-                    }
+                    fetch(`/api/account/check-entry-key?entry_key=${inputKey}`) // 후에 별개의 API로 분리하기
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === "success") {
+                                document.cookie = "entry=1; path=/";
+                                location.reload();
+                            } else {
+                                alert("Invalid Entry Key!");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error:", error);
+                            alert("An error occurred while checking the entry key.");
+                        });
                 }
             }
         </script>

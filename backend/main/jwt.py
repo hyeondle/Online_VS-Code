@@ -1,9 +1,9 @@
 import jwt
 import datetime
 from django.conf import settings
-import logging
+# import logging
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 
 def create_token(user):
     payload = {
@@ -20,13 +20,13 @@ def create_token(user):
 def get_decoded_token(token):
     try:
         decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
-        logger.debug(f"Decoded token: {decoded_token}")
+        # logger.debug(f"Decoded token: {decoded_token}")
         return decoded_token
     except jwt.ExpiredSignatureError:
-        logger.error("Token has expired")
+        # logger.error("Token has expired")
         return None
     except jwt.InvalidTokenError as e:
-        logger.error(f"Invalid token: {e}")
+        # logger.error(f"Invalid token: {e}")
         return None
 
 

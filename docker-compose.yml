@@ -21,8 +21,8 @@ services:
       - ./frontend:/usr/share/nginx/html
     networks:
       - app-network
-    environment:
-      - ENTRY_KEY=test
+    env_file:
+      - .env
 
   backend:
     container_name: backend
@@ -36,12 +36,15 @@ services:
     volumes:
       - ./backend:/app
     environment:
-      DJANGO_DB_NAME: vscode_db
-      DJANGO_DB_USER: user
-      DJANGO_DB_PASSWORD: password
-      DJANGO_DB_HOST: webdb
-      DJANGO_DB_PORT: 5432
-      WORKSPACE_BASE_DIR: /workspaces  # 사용자 디렉토리를 생성할 경로 설정
+      DJANGO_DB_NAME: ${DJANGO_DB_NAME}
+      DJANGO_DB_USER: ${DJANGO_DB_USER}
+      DJANGO_DB_PASSWORD: ${DJANGO_DB_PASSWORD}
+      DJANGO_DB_HOST: ${DJANGO_DB_HOST}
+      DJANGO_DB_PORT: ${DJANGO_DB_PORT}
+      ENTRY_KEY: ${ENTRY_KEY}
+      WORKSPACE_BASE_DIR: ${WORKSPACE_BASE_DIR}
+    env_file:
+      - .env
 
   webdb:
     container_name: webdb
@@ -52,25 +55,29 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: vscode_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     networks:
       - app-network
+    env_file:
+      - .env
 
   code-server:
     container_name: code-server
-    build: ./code_server  # code-server 디렉토리에서 빌드
+    build: ./code_server
     restart: always
     ports:
-      - "8081:8081"  # 8081 포트를 사용하도록 변경
-      - "5000:5000"  # Flask API 포트
+      - "8081:8081"
+      - "5000:5000"
     volumes:
       - ./workspaces:/home/coder/project
     environment:
-      PASSWORD: "password"  # code-server 접속 비밀번호
+      PASSWORD: ${PASSWORD}
     networks:
       - app-network
+    env_file:
+      - .env
 
 networks:
   app-network:

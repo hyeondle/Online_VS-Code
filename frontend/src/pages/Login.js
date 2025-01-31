@@ -81,7 +81,7 @@ export default class Login extends Component {
 	login() {
 		const username = this.$parent.querySelector("#username").value;
 		const password = this.$parent.querySelector("#password").value;
-	
+
 		if (username && password) {
 			fetch('http://localhost:8000/api/account/login', {
 				method: 'POST',
@@ -117,7 +117,7 @@ export default class Login extends Component {
 			alert("Please enter both username and password");
 		}
 	}
-	
+
 
 
     visitAsGuest() {

@@ -1,59 +1,5 @@
-# from ninja import Router
-# from django.contrib.auth import authenticate
-# from django.contrib.auth import login as auth_login
-# from django.contrib.auth.hashers import make_password
-# from django.core.exceptions import ValidationError
-# from django.db import IntegrityError
-
-# from .models import User
-# from .requests import LoginRequest, MakeTestUserRequest
-# from .responses import LoginResponse, UsersResponse
-# from .schemas import UserSchema
-# from .auth import AuthBearer
-# from main.jwt import create_token
-
-# account_api = Router(tags=["account"])
-
-# # 회원가입 API
-# @account_api.post("/register", response={201: UsersResponse, 400: str})
-# def register(request, payload: MakeTestUserRequest):
-#     # Check if the user already exists
-#     if User.objects.filter(login=payload.login).exists():
-#         return 400, "User with this login already exists."
-
-#     try:
-#         # Create a new user and hash their password
-#         user = User(
-#             login=payload.login,
-#             nickname=payload.login,
-#             password=make_password(payload.password)
-#         )
-#         user.full_clean()
-#         user.save()
-#         return 201, {"user": UserSchema.from_orm(user)}
-#     except ValidationError as e:
-#         return 400, f"Validation Error: {e.messages}"
-#     except IntegrityError:
-#         return 400, "User registration failed due to a database error."
-
-# # 로그인 API
-# @account_api.post("/login", response={200: LoginResponse, 401: str})
-# def login(request, payload: LoginRequest):
-#     user = authenticate(request, login=payload.login, password=payload.password)
-#     if user:
-#         # 로그인 성공 시 세션 설정
-#         auth_login(request, user)
-#         token = create_token(user)
-#         return 200, {"token": token}
-#     return 401, "Invalid credentials"
-
-# # 유저 정보 조회 API
-# @account_api.get("/me", auth=AuthBearer(), response=UsersResponse)
-# def get_profile(request):
-#     return {"user": UserSchema.from_orm(request.auth)}
-
 import os
-import logging
+# import logging
 import requests
 from pathlib import Path
 from ninja import Router
@@ -75,9 +21,9 @@ from main.jwt import create_token
 account_api = Router(tags=["account"])
 
 # 사용자 작업 디렉토리 베이스 경로
-WORKSPACE_BASE_DIR = "/workspaces"
+WORKSPACE_BASE_DIR = os.getenv('WORKSPACE_BASE_DIR')
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 
 # 회원가입 API
 @account_api.post("/register", response={201: UsersResponse, 400: str})
@@ -153,3 +99,14 @@ def get_user_id(request):
 @account_api.get("/me", auth=AuthBearer(), response=UsersResponse)
 def get_profile(request):
     return {"user": UserSchema.from_orm(request.auth)}
+
+# 엔트리 키 확인 API
+@account_api.get("/check-entry-key")
+def check_entry_key(request):
+    user_input = request.GET.get('entry_key')
+    entry_key = os.getenv('ENTRY_KEY')  # 서버 환경변수에서 가져옴
+
+    if user_input == entry_key:
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "failed"}, status=400)

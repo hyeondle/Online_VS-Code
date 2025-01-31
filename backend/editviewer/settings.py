@@ -192,3 +192,4 @@ CHANNEL_LAYERS = {
 #CSRF_COOKIE_NAME = "csrftoken"
 
 WORKSPACE_BASE_DIR = os.environ.get('WORKSPACE_BASE_DIR')
+ENTRY_KEY = os.environ.get('ENTRY_KEY')

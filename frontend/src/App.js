@@ -34,7 +34,7 @@ class App {
     render() {
         this.root.innerHTML = "";
         const { locate, entry, login, workspaceUrl } = this.state;
-    
+
         if (entry === 0) {
             // Entry가 필요한 경우
             document.querySelector(".app").innerHTML = "<h1>Access Restricted</h1><p>Please refresh the page and enter the access code correctly.</p>";
@@ -48,7 +48,7 @@ class App {
             // 기본적으로 로그인 페이지로 돌아가게 함
             this.LoginPage.renderSequnce(this.state);
         }
-    
+
         // 브라우저 히스토리 업데이트
         this.historyRouterPush(locate);
     }
@@ -58,7 +58,7 @@ class App {
             window.history.pushState({}, "", locate);
         }
     }
-    
+
     initPopStateEvent() {
         window.addEventListener("popstate", () => {
             const entryFromCookie = this.getCookie("entry") === "1" ? 1 : 0;
@@ -78,7 +78,7 @@ class App {
         // 워크스페이스 URL을 상태에 저장하고 페이지 전환
         this.setState({ workspaceUrl: workspaceUrl, locate: "/workspace" });
     }
-    
+
 }
 
 window.app = new App();
