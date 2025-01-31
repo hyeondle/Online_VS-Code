@@ -102,7 +102,7 @@ export default class Login extends Component {
 			})
 			.then(data => {
 				if (data.token) {
-					console.log(`Received Token: ${data.token}`);  // 토큰을 출력하여 확인
+					// console.log(`Received Token: ${data.token}`);  // 토큰을 출력하여 확인
 					localStorage.setItem("token", data.token);  // 토큰을 localStorage에 저장
 					this.setState({ login: 1, locate: "/src/pages/Main" });  // 메인 페이지로 이동
 				} else {
